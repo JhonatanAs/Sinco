@@ -10,11 +10,13 @@ namespace Sinco.Models
         public Asignatura()
         {
             PersonaAsignaturas = new HashSet<PersonaAsignatura>();
+            Personas = new HashSet<Persona>();
         }
 
         public int Idmateria { get; set; }
         public string Nombre { get; set; }
 
         public virtual ICollection<PersonaAsignatura> PersonaAsignaturas { get; set; }
+        public virtual ICollection<Persona> Personas { get; set; }
     }
 }

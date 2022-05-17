@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Sinco.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +30,8 @@ namespace Sinco
     {
 
       services.AddControllers();
+      services.AddCors();
+      services.AddDbContext<ColegiosincoContext>(options => options.UseMySQL(Configuration.GetConnectionString("conexion")));
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sinco", Version = "v1" });
@@ -47,6 +51,12 @@ namespace Sinco
       app.UseHttpsRedirection();
 
       app.UseRouting();
+
+      app.UseCors(options => {
+        options.AllowAnyHeader();
+        options.AllowAnyMethod();
+        options.AllowAnyOrigin();
+        });
 
       app.UseAuthorization();
 

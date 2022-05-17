@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Sinco.Models
 {
-    public partial class colegiosincoContext : DbContext
+    public partial class ColegiosincoContext : DbContext
     {
-        public colegiosincoContext()
+        public ColegiosincoContext()
         {
         }
 
-        public colegiosincoContext(DbContextOptions<colegiosincoContext> options)
+        public ColegiosincoContext(DbContextOptions<ColegiosincoContext> options)
             : base(options)
         {
         }
@@ -20,17 +20,17 @@ namespace Sinco.Models
         public virtual DbSet<Asignatura> Asignaturas { get; set; }
         public virtual DbSet<Persona> Personas { get; set; }
         public virtual DbSet<PersonaAsignatura> PersonaAsignaturas { get; set; }
-        public virtual DbSet<Reportemateria> Reportematerias { get; set; }
+        public virtual DbSet<ReportemateriasView> ReportemateriasViews { get; set; }
         public virtual DbSet<TipoPersona> TipoPersonas { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=12345;database=colegiosinco", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.29-mysql"));
-            }
-        }
+//        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//        {
+//            if (!optionsBuilder.IsConfigured)
+//            {
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+//                optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=12345;database=colegiosinco", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.29-mysql"));
+//            }
+//        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -63,9 +63,7 @@ namespace Sinco.Models
 
                 entity.HasIndex(e => e.IdTipoPersona, "tipo_persona_idx");
 
-                entity.Property(e => e.IdPersona)
-                    .ValueGeneratedNever()
-                    .HasColumnName("idPersona");
+                entity.Property(e => e.IdPersona).HasColumnName("idPersona");
 
                 entity.Property(e => e.Apellido)
                     .IsRequired()
@@ -96,6 +94,11 @@ namespace Sinco.Models
                     .IsRequired()
                     .HasMaxLength(45)
                     .HasColumnName("telefono");
+
+                entity.HasOne(d => d.IdMateriaNavigation)
+                    .WithMany(p => p.Personas)
+                    .HasForeignKey(d => d.IdMateria)
+                    .HasConstraintName("fk_asignatura");
             });
 
             modelBuilder.Entity<PersonaAsignatura>(entity =>
@@ -107,11 +110,9 @@ namespace Sinco.Models
 
                 entity.HasIndex(e => e.IdMateria, "fk_idMateria_idx");
 
-                entity.HasIndex(e => e.IdPersona, "idpersona_idx");
+                entity.HasIndex(e => e.IdPersona, "fk_idPersona_idx");
 
-                entity.Property(e => e.IdpersonaMateria)
-                    .ValueGeneratedNever()
-                    .HasColumnName("idpersona_materia");
+                entity.Property(e => e.IdpersonaMateria).HasColumnName("idpersona_materia");
 
                 entity.Property(e => e.Anio)
                     .IsRequired()
@@ -134,16 +135,49 @@ namespace Sinco.Models
                     .WithMany(p => p.PersonaAsignaturas)
                     .HasForeignKey(d => d.IdPersona)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_idpersona");
+                    .HasConstraintName("fk_idPersona");
             });
 
-            modelBuilder.Entity<Reportemateria>(entity =>
+            modelBuilder.Entity<ReportemateriasView>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToView("reportematerias");
+                entity.ToView("reportematerias_view");
 
-                entity.HasComment("View 'colegiosinco.reportematerias' references invalid table(s) or column(s) or function(s) or definer/invoker of view lack rights to use them");
+                entity.Property(e => e.Anio)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .HasColumnName("anio");
+
+                entity.Property(e => e.Aprobo)
+                    .IsRequired()
+                    .HasMaxLength(2)
+                    .HasDefaultValueSql("''")
+                    .UseCollation("utf8mb4_0900_ai_ci")
+                    .HasCharSet("utf8mb4");
+
+                entity.Property(e => e.Calificacion).HasColumnName("calificacion");
+
+                entity.Property(e => e.IdMateria).HasColumnName("idMateria");
+
+                entity.Property(e => e.IdProfesor).HasColumnName("idProfesor");
+
+                entity.Property(e => e.Identificacion).HasColumnName("identificacion");
+
+                entity.Property(e => e.Materia)
+                    .IsRequired()
+                    .HasMaxLength(45)
+                    .HasColumnName("materia");
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(45)
+                    .HasColumnName("nombre");
+
+                entity.Property(e => e.Profesor)
+                    .IsRequired()
+                    .HasMaxLength(45)
+                    .HasColumnName("profesor");
             });
 
             modelBuilder.Entity<TipoPersona>(entity =>

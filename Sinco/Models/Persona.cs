@@ -22,6 +22,7 @@ namespace Sinco.Models
         public int IdTipoPersona { get; set; }
         public int? IdMateria { get; set; }
 
+        public virtual Asignatura IdMateriaNavigation { get; set; }
         public virtual ICollection<PersonaAsignatura> PersonaAsignaturas { get; set; }
     }
 }
