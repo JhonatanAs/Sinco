@@ -14,6 +14,7 @@ namespace Sinco.Models
         }
 
         public int Idmateria { get; set; }
+        public string Codigo { get; set; }
         public string Nombre { get; set; }
 
         public virtual ICollection<PersonaAsignatura> PersonaAsignaturas { get; set; }

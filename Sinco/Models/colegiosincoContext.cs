@@ -46,6 +46,11 @@ namespace Sinco.Models
 
                 entity.Property(e => e.Idmateria).HasColumnName("idmateria");
 
+                entity.Property(e => e.Codigo)
+                    .IsRequired()
+                    .HasMaxLength(45)
+                    .HasColumnName("codigo");
+
                 entity.Property(e => e.Nombre)
                     .IsRequired()
                     .HasMaxLength(45)

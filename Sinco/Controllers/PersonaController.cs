@@ -79,6 +79,34 @@ namespace Sinco.Controllers
       }
     }
 
+    [Route("users/{idPersona}")]
+    [HttpPut]
+    public IActionResult Update([FromRoute] int idPersona, [FromBody] Persona personaRequest)
+    {
+      try
+      {
+        Persona persona = sincoContext.Personas.FirstOrDefault(w => w.IdPersona == idPersona);
+        if(persona == null)
+        {
+          return StatusCode(400, "Persona no encontrda");
+        }
+        persona.Identificacion = personaRequest.Identificacion;
+        persona.Nombre = personaRequest.Nombre;
+        persona.Apellido = personaRequest.Apellido;
+        persona.Edad = personaRequest.Edad;
+        persona.Direccion = personaRequest.Direccion;
+        persona.Telefono = personaRequest.Telefono;
+        persona.IdTipoPersona = personaRequest.IdTipoPersona;
+        persona.IdMateria = personaRequest.IdMateria;
+        sincoContext.SaveChanges();
+        return Ok(persona);
+      }
+      catch (Exception)
+      {
+        return StatusCode(500, "Ocurrio un error durante el proceso, intente nuevamente");
+
+      }
+    } 
 
   }
 }

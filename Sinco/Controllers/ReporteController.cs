@@ -25,7 +25,7 @@ namespace Sinco.Controllers
     {
       try
       {
-        IEnumerable<ReportemateriasView> data = sincoContext.ReportemateriasViews.ToList();
+        IEnumerable<ReportemateriasView> data = sincoContext.ReportemateriasViews.OrderByDescending(o=>o.Anio).ToList();
         return Ok(data);
       }
       catch (Exception)
