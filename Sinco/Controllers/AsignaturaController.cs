@@ -51,6 +51,38 @@ namespace Sinco.Controllers
         return StatusCode(500, "Ocurrio un error");
       }
     }
+    [Route("asignaturas")]
+    [HttpGet]
+    public IActionResult GetAll()
+    {
+      try
+      {
+        List<Asignatura> asignaturas = sincoContext.Asignaturas.ToList(); ;
+
+        return Ok(asignaturas);
+      }
+      catch (Exception)
+      {
+        return StatusCode(500, "Error consultando asignaturas");
+      }
+    }
+
+    [Route("asignaturas")]
+    [HttpPost]
+    public IActionResult Post([FromBody] Asignatura asignatura)
+    {
+      try
+      {
+        sincoContext.Asignaturas.Add(asignatura);
+        sincoContext.SaveChanges();
+        return Ok(asignatura);
+
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500, "Ocurrio un error registrando la asignatura, reintente la operación");
+      }
+    }
 
   }
 }

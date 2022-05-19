@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 #nullable disable
 
@@ -22,7 +23,9 @@ namespace Sinco.Models
         public int IdTipoPersona { get; set; }
         public int? IdMateria { get; set; }
 
+        [JsonIgnore]
         public virtual Asignatura IdMateriaNavigation { get; set; }
+        [JsonIgnore]
         public virtual ICollection<PersonaAsignatura> PersonaAsignaturas { get; set; }
     }
 }

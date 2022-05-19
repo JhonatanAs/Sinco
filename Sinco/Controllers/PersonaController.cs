@@ -47,7 +47,7 @@ namespace Sinco.Controllers
       }
       catch (Exception)
       {
-        return StatusCode(500, "ocurrio un error");
+        return StatusCode(500, "Error registrando usuario");
       }
     }
     [Route("users/{idPersona}")]

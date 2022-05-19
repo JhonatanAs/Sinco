@@ -1,0 +1,36 @@
+CREATE  PROCEDURE prod_usuarios
+@xml_itemsIva XML,
+@xml_usuarios XML,
+@xml_compras XML
+ --Cursor
+
+AS
+SELECT  IdProducto = T.Item.value('IdProducto[1]', 'int'),
+
+       Porcentaje = T.Item.value('Porcentaje[1]', 'float')
+
+INTO #IVA
+FROM   @xml_itemsIva.nodes('/Data/Producto')  AS T(Item);
+
+SELECT Usuario = T.Item.value('Id[1]', 'int'),
+
+       Nombre = T.Item.value('Nombre[1]', 'varchar(25)')
+
+INTO #Users1
+FROM   @xml_usuarios.nodes('/Data/Usuario')  AS T(Item);
+
+SELECT Usuario = T.Item.value('Usuario[1]', 'int'),
+
+       Producto = T.Item.value('Producto[1]', 'int'),
+
+       Valor = T.Item.value('Valor[1]',  'int')
+
+INTO #Compras
+FROM   @xml_compras.nodes('/Data/Item')  AS T(Item);
+
+
+--recorrer cursor sumar por cliente
+SELECT u.Usuario, u.Nombre,c.Valor,  c.Valor+(c.valor*iva.Porcentaje) as total, (iva.Porcentaje *c.Valor) As iva from #Compras c 
+right join #Users1 u on u.Usuario = c.Usuario
+left join #IVA iva on c.Producto =iva.IdProducto 
+go
